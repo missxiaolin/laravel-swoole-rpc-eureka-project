@@ -34,7 +34,7 @@ class EurekaClient
     public function __construct()
     {
         $config = config('eureka')['eureka'];
-        $this->url = env('APP_EUREKA_URL');
+        $this->url = env('APP_URL');
         $this->port = env('APP_PORT');
         $this->config = $config;
         $baseUri = $config['baseUri'];
@@ -127,6 +127,10 @@ class EurekaClient
         return $xml;
     }
 
+    /**
+     * @param $serviceName
+     * @return mixed
+     */
     public function getBaseUriByServiceName($serviceName)
     {
         $config = $this->config;
@@ -152,6 +156,10 @@ class EurekaClient
         }
     }
 
+    /**
+     * @param $services
+     * @param $name
+     */
     protected function cacheSingleService($services, $name)
     {
         $config = $this->config;
