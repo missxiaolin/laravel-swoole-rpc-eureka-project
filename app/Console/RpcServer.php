@@ -86,8 +86,9 @@ abstract class RpcServer extends Command
         // 用于续约
         $process = new swoole_process(function (swoole_process $worker) use ($server) {
             while (true) {
-                sleep(30);
+                sleep(3);
                 EurekaClient::getInstance()->heartbeat();
+                EurekaClient::getInstance()->cacheServices();
             }
         });
         $server->addProcess($process);

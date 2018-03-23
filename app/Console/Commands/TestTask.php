@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Support\Client\EurekaClient;
 use Illuminate\Console\Command;
+use GuzzleHttp\Client;
 
 class TestTask extends Command
 {
@@ -40,6 +41,20 @@ class TestTask extends Command
     {
         $client = EurekaClient::getInstance();
 //        dd($client->register());
-        dd(dd($client->apps()));
+//        dd(dd($client->apps()));
+        $baseUri = $client->getBaseUriByServiceName('laravel');
+        if ($baseUri) {
+            dump($baseUri);
+            try {
+                $httpClient = new Client([
+                    'base_uri' => $baseUri,
+                ]);
+                $res = $httpClient->post('/');
+                $json = json_decode($res->getBody()->getContents(), true);
+                dd($json);
+            } catch (\Exception $e) {
+                dd($e->getMessage());
+            }
+        }
     }
 }

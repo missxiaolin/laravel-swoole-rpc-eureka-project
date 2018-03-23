@@ -2,10 +2,12 @@
 namespace App\Support\Client;
 
 use Exception;
+use Illuminate\Support\Arr;
 use App\Support\Enums\ErrorCode;
 use App\Support\InstanceTrait;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
+use Illuminate\Support\Facades\Redis;
 
 class EurekaClient
 {
@@ -17,15 +19,23 @@ class EurekaClient
 
     protected $url;
 
+    protected $port;
+
     protected $headers = [
         'Accept' => 'application/json',
         'Content-Type' => 'application/xml',
     ];
 
+    /**
+     * 初始化
+     * EurekaClient constructor.
+     * @throws Exception
+     */
     public function __construct()
     {
         $config = config('eureka')['eureka'];
         $this->url = env('APP_EUREKA_URL');
+        $this->port = env('APP_PORT');
         $this->config = $config;
         $baseUri = $config['baseUri'];
 
@@ -113,6 +123,53 @@ class EurekaClient
 
         $xml = str_replace('{{APP_NAME}}', $appName, $xml);
         $xml = str_replace('{{APP_URL}}', $this->url, $xml);
+        $xml = str_replace('{{APP_PORT}}', $this->port, $xml);
         return $xml;
+    }
+
+    public function getBaseUriByServiceName($serviceName)
+    {
+        $config = $this->config;
+        $redisKey = sprintf($config['cacheKeyPrefix'], ucwords(strtolower($serviceName)));
+        return Redis::sRandMember($redisKey);
+    }
+
+    public function cacheServices()
+    {
+        $apps = Arr::get($this->apps(), 'applications', []);
+        if (!isset($apps['application'])) {
+            // 不存在服务
+            return;
+        }
+
+        $apps = $apps['application'];
+        if (isset($apps['name'])) {
+            $apps = [$apps];
+        }
+
+        foreach ($apps as $app) {
+            $this->cacheSingleService($app['instance'], $app['name']);
+        }
+    }
+
+    protected function cacheSingleService($services, $name)
+    {
+        $config = $this->config;
+        $redisKey = sprintf($config['cacheKeyPrefix'], ucwords(strtolower($name)));
+        if (isset($services['app'])) {
+            $services = [$services];
+        }
+
+        foreach ($services as $service) {
+            // 只存在一个实例
+            $port = $service['port']['$'];
+            if ($port != 80) {
+                $item = 'http://' . $service['ipAddr'] . ':' . $port . '/';
+            } else {
+                $item = 'http://' . $service['ipAddr'] . '/';
+            }
+            Redis::sadd($redisKey, $item);
+            Redis::expire($redisKey, 60);
+        }
     }
 }
