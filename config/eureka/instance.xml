@@ -1,0 +1,24 @@
+<instance>
+    <instanceId>{{APP_URL}}</instanceId>
+    <hostName>{{APP_URL}}</hostName>
+    <port enabled="true">{{APP_PORT}}</port>
+    <securePort enabled="false">443</securePort>
+    <app>{{APP_NAME}}</app>
+    <ipAddr>{{APP_URL}}</ipAddr>
+    <status>UP</status>
+    <countryId>1</countryId>
+    <dataCenterInfo class="com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo">
+        <name>MyOwn</name>
+    </dataCenterInfo>
+    <metadata>
+        <management.port>18128</management.port>
+        <jmx.port>57670</jmx.port>
+    </metadata>
+    <homePageUrl>http://{{APP_URL}}/</homePageUrl>
+    <statusPageUrl>http://{{APP_URL}}/status</statusPageUrl>
+    <healthCheckUrl>http://{{APP_URL}}/health</healthCheckUrl>
+    <vipAddress>{{APP_NAME}}</vipAddress>
+    <secureVipAddress>{{APP_NAME}}</secureVipAddress>
+    <isCoordinatingDiscoveryServer>false</isCoordinatingDiscoveryServer>
+    <actionType>ADDED</actionType>
+</instance>
