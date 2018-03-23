@@ -2,7 +2,9 @@
 
 namespace App\Console;
 
+use App\Support\Client\EurekaClient;
 use Illuminate\Console\Command;
+use swoole_process;
 use swoole_server;
 
 abstract class RpcServer extends Command
@@ -79,6 +81,16 @@ abstract class RpcServer extends Command
      */
     public function beforeServerStart(swoole_server $server)
     {
+        // 注册服务到Eureka
+        EurekaClient::getInstance()->register();
+        // 用于续约
+        $process = new swoole_process(function (swoole_process $worker) use ($server) {
+            while (true) {
+                sleep(30);
+                EurekaClient::getInstance()->heartbeat();
+            }
+        });
+        $server->addProcess($process);
         echo "-------------------------------------------" . PHP_EOL;
         echo "     Socket服务器开启 端口：" . $this->port . PHP_EOL;
         echo "-------------------------------------------" . PHP_EOL;

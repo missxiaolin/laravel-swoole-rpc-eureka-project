@@ -39,6 +39,7 @@ class TestTask extends Command
     public function handle()
     {
         $client = EurekaClient::getInstance();
-        dd($client->register());
+//        dd($client->register());
+        dd(dd($client->apps()));
     }
 }
