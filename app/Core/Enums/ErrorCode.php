@@ -74,4 +74,9 @@ class ErrorCode extends Enum
      * @Message('调用内部服务超时')
      */
     public static $ENUM_SYSTEM_SPRING_CLOUD_REQUEST_TIMEOUT = 1009;
+
+    /**
+     * @Message('Eureka配置有误')
+     */
+    public static $ENUM_EUREKA_CONFIG_INVALID = 500;
 }

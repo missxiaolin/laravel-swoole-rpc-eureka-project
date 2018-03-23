@@ -10,7 +10,6 @@
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
-        "limingxinleo/x-phalcon-enum": "^1.0",
         "predis/predis": "^1.1",
         "xiaolin/enum": "^0.0.1"
     },
