@@ -50,15 +50,35 @@ class EurekaClient
         return $this->handleResponse($response);
     }
 
+    /**
+     * 发送
+     * @return mixed
+     */
     public function register()
     {
         $config = $this->config;
-        $route = '/eureka/v2/apps/' . $config['instance'];
-        $xml = file_get_contents(base_path() . '/config/eureka/instance.xml');
+        $route = '/eureka/v2/apps/' . $config['appName'];
         $response = $this->client->post($route, [
-            'body' => $xml,
+            'body' => $this->getInstanceXml()
         ]);
 
         return $this->handleResponse($response);
+    }
+
+    /**
+     * xml文件
+     * @return mixed|string
+     */
+    protected function getInstanceXml()
+    {
+        $config = $this->config;
+
+        $xml = file_get_contents(base_path() . '/config/eureka/instance.xml');
+        $url = env('APP_URL');
+        $appName = $config['appName'];
+
+        $xml = str_replace('{{APP_NAME}}', $appName, $xml);
+        $xml = str_replace('{{APP_URL}}', $url, $xml);
+        return $xml;
     }
 }

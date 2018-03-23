@@ -9,5 +9,5 @@ return [
     |
     */
     'baseUri' => env('EUREKA_BASE_URI'),
-    'instance' => env('APP_NAME', 'laravel'),
+    'appName' => env('APP_NAME', 'laravel'),
 ];
