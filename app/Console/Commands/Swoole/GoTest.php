@@ -5,14 +5,14 @@ namespace App\Console\Commands\Swoole;
 use App\Core\Swoole\Test\TestClient;
 use Illuminate\Console\Command;
 
-class SendTest extends Command
+class GoTest extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'swoole:send@test {num}';
+    protected $signature = 'go:send';
 
     /**
      * The console command description.
@@ -38,17 +38,9 @@ class SendTest extends Command
      */
     public function handle()
     {
-//        $result = TestClient::getInstance()->getSwooleFd();
-//        dd($result);
-        $num = $this->argument('num');
         try {
-            $begin_time = microtime(true);
-            for ($i = 0; $i < $num; $i++) {
-                $result = TestClient::getInstance()->returnString();
-                dump($result);
-            }
-            $end_time = microtime(true);
-            dd('swoole 处理时间为:' . ($end_time - $begin_time));
+            $result = TestClient::getInstance()->Version();
+            dump($result);
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
